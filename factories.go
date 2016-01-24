@@ -14,8 +14,9 @@ type Factory struct {
 	Productionmodifier float64
 }
 type PlayField struct {
-	Money int
-	Round int
+	Money          float64
+	Round          int
+	GlobalModifier float64
 	FactoryContainer
 }
 
@@ -34,13 +35,14 @@ func NewFactory(name string, production float64, prodmod float64) *Factory {
 }
 
 //Create a new small factory with default settings
-func NewSmallFactory() *Factory {
+func (p *PlayField) NewSmallFactory() {
 	SmallFactoryCounter++
 	f1 := new(Factory)
 	f1.Name = "Small Factory " + strconv.Itoa(SmallFactoryCounter)
 	f1.Production = 1
 	f1.Productionmodifier = 0.2
-	return f1
+	p.Money = p.Money - 10
+	p.AddFactory(f1)
 }
 
 //function to add a created factory to a factorycontainer slice
@@ -70,23 +72,49 @@ func (o *FactoryContainer) ListFactory() {
 }
 
 func (p *PlayField) ListAll() {
-	fmt.Printf("Money: %d\nRound: %d\n", p.Money, p.Round)
+	fmt.Printf("Money: %f\nRound: %d\n", p.Money, p.Round)
 }
 func (p *PlayField) IncreaseRound() {
 	p.Round++
 }
 
+func (p *PlayField) Menu() {
+	var choice string
+	fmt.Printf("What is your next move ?\n1)Build a factory\n2)wait turn\n3)Upgrade salary modifier\n")
+	fmt.Scanln(&choice)
+
+	switch choice {
+	case "1":
+		p.NewSmallFactory()
+		fmt.Println("Added a Small factory")
+		p.NextRound()
+
+	case "2":
+		p.NextRound()
+
+	case "3":
+		p.Money = p.Money - 50
+		p.GlobalModifier = p.GlobalModifier + 0.20
+		p.NextRound()
+	}
+}
+func (p *PlayField) NextRound() {
+
+	salary := p.CountOutput() * p.GlobalModifier
+	p.Money = p.Money + salary
+	fmt.Printf("Income this round: %f\n", salary)
+	p.Round++
+	p.ListFactory()
+	p.ListAll()
+	p.Menu()
+
+}
+
 // experimenting for now
 func main() {
-	factory1 := NewSmallFactory()
-	p := PlayField{}
-	p.Money = 100
-	p.Round = 1
-	p.AddFactory(factory1)
+	p := PlayField{Money: 100, Round: 1, GlobalModifier: 1.0}
+	p.Menu()
 
-	p.ListFactory()
-	p.IncreaseRound()
-	p.ListAll()
 }
 
 //TODO create a "Game" object holding everything needed to be passed around
