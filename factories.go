@@ -5,18 +5,16 @@ import (
 	"strconv"
 )
 
-//Create global variable for factory counter used for name
-var SmallFactoryCounter, LargeFactoryCounter int
-
 type Factory struct {
 	Name               string
 	Production         float64
 	Productionmodifier float64
 }
 type PlayField struct {
-	Money          float64
-	Round          int
-	GlobalModifier float64
+	Money               float64
+	Round               int
+	GlobalModifier      float64
+	SmallFactoryCounter int
 	FactoryContainer
 }
 
@@ -36,9 +34,9 @@ type FactoryContainer struct {
 
 //Create a new small factory with default settings
 func (p *PlayField) NewSmallFactory() {
-	SmallFactoryCounter++
+	p.SmallFactoryCounter++
 	f1 := new(Factory)
-	f1.Name = "Small Factory " + strconv.Itoa(SmallFactoryCounter)
+	f1.Name = "Small Factory " + strconv.Itoa(p.SmallFactoryCounter)
 	f1.Production = 1
 	f1.Productionmodifier = 0.2
 	p.Money = p.Money - 10
