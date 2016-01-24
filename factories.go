@@ -8,7 +8,7 @@ import (
 type Factory struct {
 	Name               string
 	Production         float64
-	Productionmodifier float64
+	ProductionModifier float64
 }
 type PlayField struct {
 	Money               float64
@@ -28,7 +28,7 @@ type FactoryContainer struct {
 //	f1 := new(Factory)
 //	f1.Name = name
 //	f1.Production = production
-//	f1.Productionmodifier = prodmod
+//	f1.ProductionModifier = prodmod
 //	return f1
 //}
 
@@ -38,9 +38,22 @@ func (p *PlayField) NewSmallFactory() {
 	f1 := new(Factory)
 	f1.Name = "Small Factory " + strconv.Itoa(p.SmallFactoryCounter)
 	f1.Production = 1
-	f1.Productionmodifier = 0.2
+	f1.ProductionModifier = 0.2
 	p.Money = p.Money - 10
 	p.AddFactory(f1)
+}
+func (p *PlayField) UpgradeFactories() {
+	if p.Money >= 100 {
+
+		for i, _ := range p.Factories {
+			p.Factories[i].ProductionModifier = p.Factories[i].ProductionModifier + 0.10
+		}
+
+		p.Money = p.Money - 100
+	} else {
+		fmt.Printf("You only have: %f and a to upgrade factories you will need 100\n", p.Money)
+		p.NextRound()
+	}
 }
 
 //function to add a created factory to a factorycontainer slice
@@ -52,7 +65,7 @@ func (o *FactoryContainer) AddFactory(f *Factory) {
 func (o *FactoryContainer) CountOutput() float64 {
 	var output float64 = 0.0
 	for i, _ := range o.Factories {
-		output = output + o.Factories[i].Production*o.Factories[i].Productionmodifier
+		output = output + o.Factories[i].Production*o.Factories[i].ProductionModifier
 	}
 	return output
 }
@@ -61,7 +74,7 @@ func (o *FactoryContainer) CountOutput() float64 {
 func (o *FactoryContainer) ListFactory() {
 	for i, _ := range o.Factories {
 		fmt.Printf("____________________________________\n")
-		fmt.Printf("Factoryname: %s\nProduction: %f\nModifier:%f\n", o.Factories[i].Name, o.Factories[i].Production, o.Factories[i].Productionmodifier)
+		fmt.Printf("Factoryname: %s\nProduction: %f\nModifier:%f\n", o.Factories[i].Name, o.Factories[i].Production, o.Factories[i].ProductionModifier)
 		fmt.Printf("____________________________________\n")
 	}
 	output := o.CountOutput()
@@ -78,7 +91,7 @@ func (p *PlayField) IncreaseRound() {
 
 func (p *PlayField) Menu() {
 	var choice string
-	fmt.Printf("What is your next move ?\n1)Build a factory\n2)wait turn\n3)Upgrade salary modifier\n")
+	fmt.Printf("What is your next move ?\n1)Build a factory\n2)wait turn\n3)Upgrade salary modifier - Costs 50\n4)Upgrade Factory modifier - Costs 100\n")
 	fmt.Scanln(&choice)
 
 	switch choice {
@@ -93,6 +106,9 @@ func (p *PlayField) Menu() {
 	case "3":
 		p.Money = p.Money - 50
 		p.GlobalModifier = p.GlobalModifier + 0.20
+		p.NextRound()
+	case "4":
+		p.UpgradeFactories()
 		p.NextRound()
 	}
 }
@@ -118,3 +134,5 @@ func main() {
 }
 
 //TODO create somekind of struct that holds factory types that when selected in buying menu uses Newfactory to create selected type. Maybe even have a json file with factorytypes.
+//TODO Add checks for money before building factory or upgrading salarymodifier
+//Clear upp code maybe make several files ?
