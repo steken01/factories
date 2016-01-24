@@ -25,14 +25,14 @@ type FactoryContainer struct {
 	Factories []*Factory
 }
 
-//Create a new custom factory
-func NewFactory(name string, production float64, prodmod float64) *Factory {
-	f1 := new(Factory)
-	f1.Name = name
-	f1.Production = production
-	f1.Productionmodifier = prodmod
-	return f1
-}
+//Create a new custom factory not used by default --- testing purposes
+//func NewFactory(name string, production float64, prodmod float64) *Factory {
+//	f1 := new(Factory)
+//	f1.Name = name
+//	f1.Production = production
+//	f1.Productionmodifier = prodmod
+//	return f1
+//}
 
 //Create a new small factory with default settings
 func (p *PlayField) NewSmallFactory() {
@@ -98,6 +98,8 @@ func (p *PlayField) Menu() {
 		p.NextRound()
 	}
 }
+
+//NextRound should do everything needed to be done when on a round
 func (p *PlayField) NextRound() {
 
 	salary := p.CountOutput() * p.GlobalModifier
@@ -117,6 +119,4 @@ func main() {
 
 }
 
-//TODO create a "Game" object holding everything needed to be passed around
-//TODO create a "menu"
 //TODO create somekind of struct that holds factory types that when selected in buying menu uses Newfactory to create selected type. Maybe even have a json file with factorytypes.
